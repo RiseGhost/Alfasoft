@@ -12,11 +12,15 @@ const newContact = ref({
   image: null
 })
 
+async function UpdateContactsList(){
+  const response = await axios.get("https://josesantos-nodejs.recruitment.alfasoft.pt/contacts")
+  contacts.value = JSON.parse(response.data.data)
+}
+
 onMounted(async () => {
   console.log("MOUNTED!")
   try {
-    const response = await axios.get("https://josesantos-nodejs.recruitment.alfasoft.pt/contacts")
-    contacts.value = JSON.parse(response.data.data)
+    UpdateContactsList()
   } catch (err) {
     if (err.response?.data?.error) {
       alert("Erro do backend: " + err.response.data.error)
@@ -43,12 +47,12 @@ const createContact = async () => {
       formData,
       { headers: { "Content-Type": "multipart/form-data" } }
     )
-
+    
     newContact.value.image = ""
     newContact.value.contact = ""
     newContact.value.email = ""
     newContact.value.name = ""
-
+    UpdateContactsList()
     alert(uploadRes.data.msg)
     showPopup.value = false
   } catch (err) {
@@ -105,6 +109,7 @@ const createContact = async () => {
       <h2>{{ c.name }}</h2>
       <p><strong>Telefone:</strong> {{ c.contact }}</p>
       <p><strong>Email:</strong> {{ c.email }}</p>
+      <button>Deleted</button>
     </div>
   </div>
 </template>
@@ -112,6 +117,7 @@ const createContact = async () => {
 <style>
 html{
   font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  background-color: rgb(226, 226, 226);
 }
 </style>
 
@@ -170,17 +176,44 @@ h1{
   margin: auto;
 }
 
+.card button{
+  scale: 0.8;
+  opacity: 0;
+  background-color: rgb(244, 119, 119);
+  color: black;
+  font-weight: 500;
+  padding: 10px;
+  border: none;
+  border-radius: 4px;
+  width: 60%;
+  cursor: pointer;
+  transition: 2s ease-in-out;
+  transform: translateY(1000);
+}
+
 .card {
   padding: 15px;
   border-radius: 10px;
   background: #f5f5f5;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
   text-align: center;
+  transition: 1s ease-in-out;
+  overflow: hidden;
+}
+
+
+.card:hover{
+  transform: translateY(25px);
+}
+
+.card:hover button{
+  scale: 1;
+  opacity: 1;
 }
 
 .avatar {
-  width: 80px;
-  height: 80px;
+  width: 90px;
+  height: 90px;
   border-radius: 50%;
   object-fit: cover;
   margin-bottom: 10px;
