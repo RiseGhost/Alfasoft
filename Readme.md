@@ -24,3 +24,14 @@ Para o desenvolvimento deste trabalho foi criada a tabela com a seguinte descri�
 
 ## Frontend:
 
+Visto normal do website
+![Normal](https://github.com/RiseGhost/Alfasoft/blob/main/Documentacion%20Images/Captura%20de%20ecr%C3%A3%20de%202025-11-27%2016-10-02.png?raw=true)
+
+Hover por cima do cards com os contactos:
+![Hover](https://github.com/RiseGhost/Alfasoft/blob/main/Documentacion%20Images/Captura%20de%20ecr%C3%A3%20de%202025-11-27%2016-10-11.png?raw=true)
+
+## O que foi implementado:
+
+- Criação e armazenamento de contactos;
+- Listagem de contactos;
+- Remoção de contactos
