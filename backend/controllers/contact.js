@@ -1,5 +1,9 @@
 const db = require("../models/db.js")
 
+/*
+    This file implement all function that connect and manipulate the database.
+*/
+
 async function GetAllContacts() {
     try{
         const connect = await db.getConnection()
@@ -43,12 +47,10 @@ async function CreatContact(name,phone,email,picture_url){
         if (phone.length != 9) return "Invalid phone number"
         if (email === undefined || typeof email != "string" || email.length == 0) return "Email can not be null"
         if (/.+@.+\..+/.test(email) === false) return "Invalid Email"
-        if (picture_url === undefined || typeof picture_url != "string" || picture_url.length == 0) return "Picture can not be null"
+        //if (picture_url === undefined || typeof picture_url != "string" || picture_url.length == 0) return "Picture can not be null"
 
         if (await Exist(email,phone)) return "Exist a user with this email or phone"
 
-        //const data = await connect.query("SELECT * FROM contact")
-        //console.log(data)
         await connect.query(
             "INSERT INTO contact (name, contact, email, picture) VALUES (?, ?, ?, ?)",
             [name,phone,email,picture_url]
@@ -61,20 +63,19 @@ async function CreatContact(name,phone,email,picture_url){
     }
 }
 
-async function DeletedContact(email) {
+async function DeletedContact(id) {
     try{
         const connect = await db.getConnection()
 
-        if (email === undefined || typeof email != "string" || email.length == 0) return "Email can not be null"
-        if (/.+@.+\..+/.test(email) === false) return "Invalid Email"
+        if (id === undefined) return "ID can not be null"
 
         const result = await connect.query(
-            "DELETE FROM contact WHERE email = ?",
-            [email]
+            "DELETE FROM contact WHERE id = ?",
+            [id]
         )
 
         connect.release()
-        if (result.affectedRows === 0) return "No users found with this email"
+        if (result.affectedRows === 0) return "No users found with this id"
         
         return "Contact deleted with sucess"
     } catch (err){

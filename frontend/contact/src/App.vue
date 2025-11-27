@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onMounted } from "vue"
-import axios from "axios"
+import api from "./api"
 
 const contacts = ref([])
 const showPopup = ref(false)
@@ -13,7 +13,7 @@ const newContact = ref({
 })
 
 async function UpdateContactsList(){
-  const response = await axios.get("https://josesantos-nodejs.recruitment.alfasoft.pt/contacts")
+  const response = await api.get("/contacts")
   contacts.value = JSON.parse(response.data.data)
 }
 
@@ -42,8 +42,8 @@ const createContact = async () => {
     formData.append("email", newContact.value.email)
     formData.append("phone", newContact.value.contact)
 
-    const uploadRes = await axios.post(
-      "http://127.0.0.1:10093/creatContact",
+    const uploadRes = await api.post(
+      "/contacts",
       formData,
       { headers: { "Content-Type": "multipart/form-data" } }
     )
@@ -64,6 +64,15 @@ const createContact = async () => {
       alert("Erro inesperado: " + err.message)
     }
   }
+}
+
+function DeletedContact(contact){
+  const { id } = contact
+  api.delete(`/contacts`, { data: { id } }).then((responde) => {
+    UpdateContactsList()
+    console.log(responde)
+    alert(responde.data.msg)
+  })
 }
 
 </script>
@@ -109,7 +118,12 @@ const createContact = async () => {
       <h2>{{ c.name }}</h2>
       <p><strong>Telefone:</strong> {{ c.contact }}</p>
       <p><strong>Email:</strong> {{ c.email }}</p>
-      <button>Deleted</button>
+      <div class="BtnsDiv">
+        <button class="DeletedBtn" @click="DeletedContact(c)">Deleted</button>
+        <button class="EditBtn">
+          <img src="/pencil.png" alt="edit"></img>
+        </button>
+      </div>
     </div>
   </div>
 </template>
@@ -144,6 +158,7 @@ h1{
   display: flex;
   justify-content: center;
   align-items: center;
+  z-index: 10;
 }
 
 .popup {
@@ -176,12 +191,19 @@ h1{
   margin: auto;
 }
 
-.card button{
+.cards .BtnsDiv{
+  position: relative;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.card .DeletedBtn, .EditBtn{
   scale: 0.8;
   opacity: 0;
   background-color: rgb(244, 119, 119);
   color: black;
-  font-weight: 500;
+  font-weight: 600;
   padding: 10px;
   border: none;
   border-radius: 4px;
@@ -189,6 +211,22 @@ h1{
   cursor: pointer;
   transition: 2s ease-in-out;
   transform: translateY(1000);
+}
+
+.DeletedBtn{
+  height: 100%;
+}
+
+.EditBtn{
+  position: relative;
+  width: 20%;
+  background-color: #515151;
+  color: white;
+}
+
+.EditBtn img{
+  aspect-ratio: 1;
+  width: 70%;
 }
 
 .card {
